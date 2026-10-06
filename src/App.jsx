@@ -8,12 +8,11 @@ import PurityIndex from './components/PurityIndex';
 import ReservationDrawer from './components/ReservationDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import AudioAtmosphere from './components/AudioAtmosphere';
-import ThreeBackgroundCanvas from './components/ThreeBackgroundCanvas';
 import Footer from './components/Footer';
 
 export default function App() {
   const [reserveOpen, setReserveOpen] = useState(false);
-  const [checkoutData, setCheckoutData] = useState<any>(null);
+  const [checkoutData, setCheckoutData] = useState(null);
 
   const handleOpenReserve = () => {
     setReserveOpen(true);
@@ -23,7 +22,7 @@ export default function App() {
     setReserveOpen(false);
   };
 
-  const handleProceedCheckout = (data: any) => {
+  const handleProceedCheckout = (data) => {
     setReserveOpen(false);
     setCheckoutData(data);
   };
@@ -33,25 +32,21 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#05090C] text-[#E8ECEF] selection:bg-[#111820] selection:text-white relative overflow-x-hidden">
-      {/* 3D Ambient WebGL Atmosphere (Floating bubbles & water particles) */}
-      <ThreeBackgroundCanvas />
-
+    <div className="min-h-screen bg-[#05090C] text-[#E8ECEF] selection:bg-[#111820] selection:text-white relative">
       {/* Audio Atmosphere Ambient Synth Toggle */}
       <AudioAtmosphere />
 
       {/* Minimal Header Navbar */}
       <Navbar onOpenReserve={handleOpenReserve} />
 
-      {/* Main Content Sections */}
-      <main className="relative z-10">
-        {/* Panoramic Mountains & Master Bottle Hero */}
+      {/* Main Content */}
+      <main>
         <Hero onOpenReserve={handleOpenReserve} />
 
         {/* Visual Campaign Mosaic Grid (Motifs 01 - 08) */}
         <CampaignGrid />
 
-        {/* 3D Bottle Architecture & Real-Time Three.js WebGL Facet Explorer */}
+        {/* Bottle Architecture & Facet Lighting Explorer */}
         <BottleArchitecture />
 
         {/* Ionization & Purification Protocol */}
