@@ -25,61 +25,59 @@ export default function Navbar({ onOpenReserve }: NavbarProps) {
           : 'bg-transparent py-7 border-b border-white/5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        {/* Monolithic Logo */}
-        <a href="#" className="flex items-center space-x-3 group shrink-0">
-          <span className="font-syncopate text-xl md:text-2xl font-light tracking-[0.5em] text-white group-hover:text-[#89B4D4] transition-colors">
+      <div className="max-w-7xl mx-auto px-8 md:px-16 flex items-center justify-between">
+        {/* Monolithic Editorial Logo */}
+        <a href="#" className="flex items-center group shrink-0">
+          <span className="font-editorial text-lg md:text-xl font-light tracking-[0.45em] text-white/90 hover:text-white transition-opacity">
             I O N A
           </span>
         </a>
 
-        {/* Desktop Nav - with explicit spacing and distinct tracking */}
-        <nav className="hidden lg:flex items-center gap-10 xl:gap-14 text-[11px] tracking-[0.35em] text-[#E8ECEF]/80 uppercase">
+        {/* Minimal Editorial Nav Links */}
+        <nav className="hidden md:flex items-center gap-12 xl:gap-16 text-[10px] tracking-[0.4em] font-light text-white/60 uppercase">
           <a
             href="#campaign"
-            className="hover:text-white transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-white hover:after:w-full after:transition-all"
+            className="hover:text-white transition-colors py-1 relative hover:opacity-100 opacity-80"
           >
             CAMPAIGN
           </a>
           <a
             href="#architecture"
-            className="hover:text-white transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-white hover:after:w-full after:transition-all flex items-center gap-1.5"
+            className="hover:text-white transition-colors py-1 relative hover:opacity-100 opacity-80"
           >
-            <span>ARCHITECTURE</span>
-            <span className="text-[8px] font-mono px-1 py-0.2 bg-white/10 text-[#89B4D4] rounded">3D</span>
+            ARCHITECTURE
           </a>
           <a
-            href="#purification"
-            className="hover:text-white transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-white hover:after:w-full after:transition-all"
+            href="#ionization"
+            className="hover:text-white transition-colors py-1 relative hover:opacity-100 opacity-80"
           >
             IONIZATION
           </a>
           <a
-            href="#minerals"
-            className="hover:text-white transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-white hover:after:w-full after:transition-all"
+            href="#matrix"
+            className="hover:text-white transition-colors py-1 relative hover:opacity-100 opacity-80"
           >
             MATRIX
           </a>
         </nav>
 
-        {/* Right Reserve Action Button */}
-        <div className="hidden sm:flex items-center space-x-6 shrink-0">
+        {/* Minimal Luxury Reserve Action */}
+        <div className="hidden sm:flex items-center shrink-0">
           <button
             onClick={onOpenReserve}
-            className="flex items-center space-x-2.5 px-5 py-2.5 bg-transparent border border-white/20 hover:border-white/60 hover:bg-white/5 transition-all text-[11px] tracking-[0.35em] text-white uppercase"
+            className="text-[10px] tracking-[0.4em] font-light text-white/80 hover:text-white uppercase transition-all py-1.5 px-3 border-b border-white/20 hover:border-white/80 cursor-pointer"
           >
-            <ShoppingBag className="w-3.5 h-3.5 text-[#89B4D4]" />
-            <span>RESERVE</span>
+            RESERVE
           </button>
         </div>
 
         {/* Mobile Menu Toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden text-white p-2"
+          className="md:hidden text-white/70 hover:text-white p-2"
           aria-label="Toggle Navigation Menu"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 

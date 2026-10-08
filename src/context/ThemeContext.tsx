@@ -17,8 +17,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem('iona_theme') as Theme | null;
       if (saved === 'dark' || saved === 'light') return saved;
     }
-    // Default to light mode for fresh crystalline pure look, while preserving instant dark mode switch
-    return 'light';
+    // Default to dark mode for deep cinematic subterranean luxury
+    return 'dark';
   });
 
   useEffect(() => {

@@ -289,160 +289,242 @@ export default function Scene({
       // Multi-bottle visibility flag for Section 07 and 08
       let showMultiBottles = false;
 
-      // Check section element positions for pinpoint accurate scroll choreography
-      const processEl = document.getElementById('process');
-      const bottleEl = document.getElementById('bottle');
-      const rangeEl = document.getElementById('range');
-      const questionsEl = document.getElementById('questions');
-      const ultimateEl = document.getElementById('ultimate-hydration');
+      // Calculate active section from DOM elements for 100% responsive accuracy
+      const sections = [
+        'scene-hero',
+        'scene-cap',
+        'scene-ionized',
+        'scene-alkaline',
+        'scene-clean-pure',
+        'scene-minerals',
+        'scene-higher-standard',
+        'scene-spotlight-cap',
+        'scene-brighter-tomorrow',
+        'scene-pack',
+        'scene-waterfall',
+        'scene-facets',
+        'scene-underwater',
+        'scene-closing'
+      ];
 
-      let processFraction = -1;
-      if (processEl) {
-        const pRect = processEl.getBoundingClientRect();
-        if (pRect.top <= window.innerHeight * 0.8 && pRect.bottom >= window.innerHeight * 0.2) {
-          const totalDistance = pRect.height + window.innerHeight * 0.6;
-          const current = (window.innerHeight * 0.8) - pRect.top;
-          processFraction = Math.min(1, Math.max(0, current / totalDistance));
+      let activeSection = 'scene-hero';
+      for (let i = 0; i < sections.length; i++) {
+        const el = document.getElementById(sections[i]);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.55 && rect.bottom >= window.innerHeight * 0.2) {
+            activeSection = sections[i];
+            break;
+          }
         }
       }
 
-      const rangeRect = rangeEl?.getBoundingClientRect();
-      const bottleRect = bottleEl?.getBoundingClientRect();
-      const questionsRect = questionsEl?.getBoundingClientRect();
-      const ultimateRect = ultimateEl?.getBoundingClientRect();
-
-      if (rangeRect && rangeRect.top <= window.innerHeight * 0.6) {
-        // Section 07 & 08: PRODUCT RANGE & QUESTIONS / ULTIMATE HYDRATION
-        showMultiBottles = true;
-
-        const isUltimateSection = ultimateRect && ultimateRect.top <= window.innerHeight * 0.75;
-        const aspect = camera.aspect;
-        const isMobileView = aspect < 0.95 || window.innerWidth < 768;
-
-        // Dynamic scale and spacing ensuring all 3 bottles fit completely on any screen
-        const multiScale = isMobileView ? 0.36 : (aspect < 1.3 ? 0.44 : 0.48);
-        const spacingX = isMobileView ? Math.min(0.85, aspect * 1.05) : (aspect < 1.3 ? 1.4 : 1.7);
-
-        // Ground baseline aligned so all 3 bottle bottoms rest on the exact same plane
-        const baseY = isUltimateSection ? -0.85 : -0.75;
-
-        targetCamX = 0;
-        targetCamY = isUltimateSection ? 0.05 : (questionsRect && questionsRect.top <= window.innerHeight * 0.5 ? 0.0 : -0.05);
-        targetCamZ = isMobileView ? 7.2 : 6.4;
-
-        // Center Bottle (Main 750ML, hScale = 1.0)
-        targetBottleX = 0;
-        targetBottleY = baseY + 1.69 * 1.0 * multiScale;
-        targetBottleZ = selectedBottleIndex === 1 || selectedBottleIndex === 2 ? 0.3 : 0;
-        targetRotX = 0.02;
-        targetRotY = time * 0.06;
-        targetRotZ = 0;
-        targetScale = multiScale;
-
-        // Left Bottle (250ML, hScale = 0.72)
-        targetBottle250X = -spacingX;
-        targetBottle250Y = baseY + 1.69 * 0.72 * multiScale;
-        targetBottle250Z = selectedBottleIndex === 0 ? 0.3 : 0;
-
-        // Right Bottle (1L, hScale = 1.28)
-        targetBottle1LX = spacingX;
-        targetBottle1LY = baseY + 1.69 * 1.28 * multiScale;
-        targetBottle1LZ = selectedBottleIndex === 3 ? 0.3 : 0;
-
-        targetSecondaryScale = multiScale;
-      } else if (bottleRect && bottleRect.top <= window.innerHeight * 0.5) {
-        // Section 06: OUR BOTTLE SHOWCASE (Full 360 Vessel Inspection)
-        const bTotal = bottleRect.height || window.innerHeight;
-        const bProgress = Math.min(1, Math.max(0, (window.innerHeight * 0.5 - bottleRect.top) / bTotal));
-        targetCamX = lerp(-0.35, 0.0, bProgress);
-        targetCamY = 0.0;
-        targetCamZ = lerp(5.4, 4.9, bProgress);
-
-        targetBottleX = lerp(0.35, 0.0, bProgress);
-        targetBottleY = 0.0;
-        targetBottleZ = 0;
-
-        targetRotX = 0.04;
-        targetRotY = 2.5 + bProgress * Math.PI + time * 0.06;
-        targetRotZ = 0.0;
-        targetScale = isMobile ? 0.62 : 0.72;
-      } else if (processFraction >= 0) {
-        // Section 05: THE IONA PROCESS (PROVENANCE)
-        targetCamX = lerp(0.2, -0.05, processFraction);
-        targetCamY = 0.0;
-        targetCamZ = 5.6;
-
-        targetBottleX = isMobile ? 0 : 0.48;
-        targetBottleY = 0.0;
-        targetBottleZ = 0;
-
-        targetRotX = 0.05;
-        targetRotY = 0.6 + processFraction * (Math.PI * 2) + time * 0.04;
-        targetRotZ = -0.03;
-        targetScale = isMobile ? 0.60 : 0.68;
+      // Check Alkaline theme switch dynamically
+      if (activeSection === 'scene-alkaline') {
+        if (themeRef.current !== 'light') {
+          applyThemeToScene('light');
+        }
       } else {
-        // Sections 01 - 04 (Hero through Resonance)
-        if (p < 0.12) {
-          // Section 01: HERO - Full bottle completely framed with elegant margins
-          const t = p / 0.12;
-          targetCamX = lerp(0, 0.15, t);
-          targetCamY = 0.0;
-          targetCamZ = lerp(6.2, 5.8, t);
+        if (themeRef.current !== 'dark') {
+          applyThemeToScene('dark');
+        }
+      }
 
-          targetBottleX = lerp(0.95, 1.15, t);
-          targetBottleY = 0.0;
+      // 13-Scene 3D Camera and Single Bottle Choreography
+      switch (activeSection) {
+        case 'scene-hero':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.8;
+          targetBottleX = isMobile ? 0 : 0.85;
+          targetBottleY = isMobile ? -0.35 : 0.0;
           targetBottleZ = 0;
-
           targetRotX = 0.03;
           targetRotY = -0.15 + time * 0.03;
           targetRotZ = -0.02;
-          targetScale = isMobile ? 0.62 : 0.70;
-        } else if (p < 0.25) {
-          // Section 02: PHILOSOPHY (STILLNESS)
-          const t = (p - 0.12) / 0.13;
-          targetCamX = lerp(0.15, -0.6, t);
-          targetCamY = 0.05;
-          targetCamZ = lerp(5.8, 5.6, t);
+          targetScale = isMobile ? 0.60 : 0.74;
+          break;
 
-          targetBottleX = lerp(1.15, 1.25, t);
-          targetBottleY = 0.0;
+        case 'scene-cap':
+          // Camera dollies in towards cap; glossy black embossed cap fills view
+          targetCamX = isMobile ? 0 : 0.2;
+          targetCamY = 0.75;
+          targetCamZ = 3.3;
+          targetBottleX = isMobile ? 0 : -0.25;
+          targetBottleY = -0.85;
+          targetBottleZ = 0.1;
+          targetRotX = 0.12;
+          targetRotY = time * 0.06;
+          targetRotZ = 0.0;
+          targetScale = isMobile ? 0.95 : 1.25;
+          break;
+
+        case 'scene-ionized':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.2;
+          targetBottleX = isMobile ? 0 : -0.85;
+          targetBottleY = 0.05;
           targetBottleZ = 0;
-
-          targetRotX = 0.04;
-          targetRotY = lerp(-0.15, 0.3, t) + time * 0.03;
-          targetRotZ = -0.02;
-          targetScale = isMobile ? 0.62 : 0.70;
-        } else if (p < 0.38) {
-          // Section 03: EQUILIBRIUM (STONE & ALKALINE BALANCE)
-          const t = (p - 0.25) / 0.13;
-          targetCamX = lerp(-0.6, -0.85, t);
-          targetCamY = 0.05;
-          targetCamZ = lerp(5.6, 5.4, t);
-
-          targetBottleX = lerp(1.25, 0.95, t);
-          targetBottleY = 0.0;
-          targetBottleZ = 0;
-
           targetRotX = 0.04;
           targetRotY = 0.4 + time * 0.03;
-          targetRotZ = -0.02;
-          targetScale = isMobile ? 0.62 : 0.70;
-        } else {
-          // Section 04: RESONANCE (MOLECULAR HARMONY)
-          const t = Math.min(1, Math.max(0, (p - 0.38) / 0.12));
-          targetCamX = lerp(-0.85, 0.65, t);
-          targetCamY = 0.05;
-          targetCamZ = lerp(5.4, 5.2, t);
+          targetRotZ = 0.14;
+          targetScale = isMobile ? 0.58 : 0.72;
+          break;
 
-          targetBottleX = lerp(0.95, -0.85, t);
+        case 'scene-alkaline':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.5;
+          targetBottleX = isMobile ? 0 : 0.75;
           targetBottleY = 0.0;
           targetBottleZ = 0;
-
           targetRotX = 0.04;
-          targetRotY = 0.8 + time * 0.03;
-          targetRotZ = 0.02;
-          targetScale = isMobile ? 0.62 : 0.70;
-        }
+          targetRotY = time * 0.18;
+          targetRotZ = 0.0;
+          targetScale = isMobile ? 0.60 : 0.75;
+          break;
+
+        case 'scene-clean-pure':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.4;
+          targetBottleX = isMobile ? 0 : -0.8;
+          targetBottleY = 0.0;
+          targetBottleZ = 0;
+          targetRotX = 0.04;
+          targetRotY = 0.9 + time * 0.04;
+          targetRotZ = -0.03;
+          targetScale = isMobile ? 0.58 : 0.72;
+          break;
+
+        case 'scene-minerals':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.6;
+          targetBottleX = isMobile ? 0 : 0.8;
+          targetBottleY = 0.08;
+          targetBottleZ = 0;
+          targetRotX = 0.05;
+          targetRotY = -0.3 + time * 0.04;
+          targetRotZ = -0.02;
+          targetScale = isMobile ? 0.58 : 0.70;
+          break;
+
+        case 'scene-higher-standard':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.6;
+          targetBottleX = 0;
+          targetBottleY = 0;
+          targetBottleZ = 0;
+          targetRotX = 0.03;
+          targetRotY = time * 0.05;
+          targetRotZ = 0.0;
+          targetScale = isMobile ? 0.60 : 0.72;
+          break;
+
+        case 'scene-spotlight-cap':
+          targetCamX = 0;
+          targetCamY = 0.55;
+          targetCamZ = 3.6;
+          targetBottleX = isMobile ? 0 : 0.45;
+          targetBottleY = -0.7;
+          targetBottleZ = 0.1;
+          targetRotX = 0.1;
+          targetRotY = time * 0.08;
+          targetRotZ = 0.0;
+          targetScale = isMobile ? 0.85 : 1.1;
+          break;
+
+        case 'scene-brighter-tomorrow':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.4;
+          targetBottleX = isMobile ? 0 : -0.75;
+          targetBottleY = -0.08;
+          targetBottleZ = 0;
+          targetRotX = 0.06;
+          targetRotY = 0.5 + time * 0.04;
+          targetRotZ = -0.22;
+          targetScale = isMobile ? 0.58 : 0.72;
+          break;
+
+        case 'scene-pack':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.8;
+          targetBottleX = isMobile ? 0 : 0.75;
+          targetBottleY = -0.15;
+          targetBottleZ = 0;
+          targetRotX = 0.04;
+          targetRotY = time * 0.08;
+          targetRotZ = 0.0;
+          targetScale = isMobile ? 0.58 : 0.68;
+          break;
+
+        case 'scene-waterfall':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.5;
+          targetBottleX = isMobile ? 0 : -0.75;
+          targetBottleY = -0.22;
+          targetBottleZ = 0;
+          targetRotX = 0.02;
+          targetRotY = time * 0.03;
+          targetRotZ = 0.0;
+          targetScale = isMobile ? 0.60 : 0.74;
+          break;
+
+        case 'scene-facets':
+          // Extreme macro camera into facets
+          targetCamX = isMobile ? 0 : 0.25;
+          targetCamY = 0.1;
+          targetCamZ = 3.0;
+          targetBottleX = isMobile ? 0 : 0.2;
+          targetBottleY = -0.15;
+          targetBottleZ = 0.2;
+          targetRotX = 0.08;
+          targetRotY = time * 0.08;
+          targetRotZ = 0.04;
+          targetScale = isMobile ? 1.05 : 1.35;
+          break;
+
+        case 'scene-underwater':
+          targetCamX = 0;
+          targetCamY = -0.45;
+          targetCamZ = 5.8;
+          targetBottleX = 0;
+          targetBottleY = -0.35;
+          targetBottleZ = 0;
+          targetRotX = 0.04;
+          targetRotY = time * 0.04;
+          targetRotZ = 0.03;
+          targetScale = isMobile ? 0.58 : 0.70;
+          break;
+
+        case 'scene-closing':
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 6.4;
+          targetBottleX = 0;
+          targetBottleY = 0.15;
+          targetBottleZ = 0;
+          targetRotX = 0.03;
+          targetRotY = time * 0.04;
+          targetRotZ = 0;
+          targetScale = isMobile ? 0.45 : 0.55;
+          break;
+
+        default:
+          targetCamX = 0;
+          targetCamY = 0;
+          targetCamZ = 5.8;
+          targetBottleX = isMobile ? 0 : 0.85;
+          targetBottleY = 0;
+          targetBottleZ = 0;
+          targetScale = isMobile ? 0.60 : 0.74;
+          break;
       }
 
       // Smooth camera interpolation

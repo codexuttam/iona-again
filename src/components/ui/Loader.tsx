@@ -17,11 +17,22 @@ export default function Loader({ onComplete }: LoaderProps) {
       onComplete();
     }, 2400); // Complete & reveal DOM typography
 
+    // Allow instant dismiss on click or scroll
+    const handleInteract = () => {
+      setPhase(4);
+      onComplete();
+    };
+
+    window.addEventListener('keydown', handleInteract, { once: true });
+    window.addEventListener('wheel', handleInteract, { once: true });
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
       clearTimeout(t4);
+      window.removeEventListener('keydown', handleInteract);
+      window.removeEventListener('wheel', handleInteract);
     };
   }, [onComplete]);
 
@@ -29,7 +40,8 @@ export default function Loader({ onComplete }: LoaderProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--theme-bg)] transition-opacity duration-1000 ${
+      onClick={onComplete}
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--theme-bg)] transition-opacity duration-700 cursor-pointer ${
         phase === 3 ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
